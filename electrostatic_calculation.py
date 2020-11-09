@@ -17,31 +17,37 @@ def get_coulomb_force(q1, q2, r1, r2):
 
     return f1
 
+def convert_to_numpy(df_entry):
+    return df_entry.to_numpy()[0]
+
 if __name__ == "__main__":
     ppdb = PandasPdb()
     # read in the pdb file from command line
     ppdb.read_pdb(sys.argv[1])
     df = ppdb.df
     #print(df['ATOM'][df['ATOM']['chain_id'] == '6'])
+    # extract coordinates
+    coords=['x_coord', 'y_coord', 'z_coord']
     # Two focus atoms on chain 4
     print("TYR87:")
-    print(df['ATOM'][df['ATOM']['atom_number'] == 11221])
+    TYR87 = convert_to_numpy(df['ATOM'][coords][df['ATOM']['atom_number'] == 11221])
+    print(TYR87)
     print("ASP139:")
-    print(df['ATOM'][df['ATOM']['atom_number'] == 11618])
+    print(df['ATOM'][coords][df['ATOM']['atom_number'] == 11618])
     # all GLU on chain 6
-    print(df['ATOM'][(df['ATOM']['chain_id'] == '6') & \
+    print(df['ATOM'][coords][(df['ATOM']['chain_id'] == '6') & \
          (df['ATOM']['residue_name'] == 'GLU') & \
          (df['ATOM']['atom_name'] == 'OE2')])
     # all ASP on chain 6
-    print(df['ATOM'][(df['ATOM']['chain_id'] == '6') & \
+    print(df['ATOM'][coords][(df['ATOM']['chain_id'] == '6') & \
          (df['ATOM']['residue_name'] == 'ASP') & \
          (df['ATOM']['atom_name'] == 'OD2')])
     # all ARG on chain 6
-    print(df['ATOM'][(df['ATOM']['chain_id'] == '6') & \
+    print(df['ATOM'][coords][(df['ATOM']['chain_id'] == '6') & \
          (df['ATOM']['residue_name'] == 'ARG') & \
          (df['ATOM']['atom_name'] == 'NH1')])
     # all LYS on chain 6
-    print(df['ATOM'][(df['ATOM']['chain_id'] == '6') & \
+    print(df['ATOM'][coords][(df['ATOM']['chain_id'] == '6') & \
          (df['ATOM']['residue_name'] == 'LYS') & \
          (df['ATOM']['atom_name'] == 'NZ')])
     # N2
