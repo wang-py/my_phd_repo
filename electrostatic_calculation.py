@@ -39,7 +39,6 @@ if __name__ == "__main__":
     GLU = convert_to_numpy(df['ATOM'][coords][(df['ATOM']['chain_id'] == '6') \
         & (df['ATOM']['residue_name'] == 'GLU') \
         & (df['ATOM']['atom_name'] == 'OE2')])
-    print(GLU)
     # all ASP on chain 6
     ASP = convert_to_numpy(df['ATOM'][coords][(df['ATOM']['chain_id'] == '6') \
         & (df['ATOM']['residue_name'] == 'ASP') \
@@ -53,6 +52,6 @@ if __name__ == "__main__":
         & (df['ATOM']['residue_name'] == 'LYS') \
         & (df['ATOM']['atom_name'] == 'NZ')])
     # N2
-
-    f1 = get_coulomb_force(-1, 1, np.array([1,0,0]), np.array([0,0,0]))
-    print("F1 is:", f1)
+    N2 = convert_to_numpy(df['HETATM'][coords][(df['HETATM']['chain_id'] == '6') \
+        & (df['HETATM']['residue_name'] == 'SF4') \
+        & (df['HETATM']['atom_name'] == 'S2')])
