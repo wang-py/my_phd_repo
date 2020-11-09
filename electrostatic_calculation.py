@@ -17,6 +17,19 @@ def get_coulomb_force(q1, q2, r1, r2):
 
     return f1
 
+def get_total_force(r1, q1, system, sign):
+    """
+    q1: focus atom's charge
+    r1: focus atom's postion
+    system: array of coordinates
+    sign: signs of charges in system
+    """
+    f = np.zeros([1,3])
+    for one_atom in system:
+        f += get_coulomb_force(q1, sign, r1, one_atom)
+
+    return f
+
 def convert_to_numpy(df_entry):
     return df_entry.to_numpy()
 
@@ -55,3 +68,20 @@ if __name__ == "__main__":
     N2 = convert_to_numpy(df['HETATM'][coords][(df['HETATM']['chain_id'] == '6') \
         & (df['HETATM']['residue_name'] == 'SF4') \
         & (df['HETATM']['atom_name'] == 'S2')])
+
+    # calculate total interactions
+    F_TYR = get_total_force(TYR87, -1, GLU, -1)
+    F_TYR += get_total_force(TYR87, -1, ASP, -1)
+    F_TYR += get_total_force(TYR87, -1, ARG, 1)
+    F_TYR += get_total_force(TYR87, -1, LYS, 1)
+    F_TYR += get_total_force(TYR87, -1, N2, -2)
+
+    print("Total force on TYR87 is:", F_TYR)
+
+    F_ASP = get_total_force(ASP139, -1, GLU, -1)
+    F_ASP += get_total_force(ASP139, -1, ASP, -1)
+    F_ASP += get_total_force(ASP139, -1, ARG, 1)
+    F_ASP += get_total_force(ASP139, -1, LYS, 1)
+    F_ASP += get_total_force(ASP139, -1, N2, -2)
+
+    print("Total force on ASP139 is:", F_ASP)
