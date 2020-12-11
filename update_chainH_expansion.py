@@ -12,16 +12,15 @@ if __name__ == "__main__":
     chainH_start = 620
     # lines of one frame
     frame_lines = 814
-    for i in range(chainH_start, chainH_start+frame_lines):
-        input_line = input_lines[i]
-        print(input_line, end="")
     # from 37 to 75
     frame_index = int(sys.argv[3])
     # output pdb (next step's input)
     #output_pdb = open(sys.argv[4], 'w')
-    start = frame_index * frame_lines
-    end = start + frame_lines
-    for i in range(start, end):
-        line = lines[i]
-        print(line, end="")
+    mode_start = frame_index * frame_lines
+    #end = start + frame_lines
+    for i in range(frame_lines - 3):
+        input_line = input_lines[chainH_start + i]
+        print(input_line, end="")
+        #mode_line = lines[mode_start + i + 1]
+        #print(mode_line, end="")
     pass
