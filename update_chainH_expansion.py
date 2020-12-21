@@ -12,8 +12,8 @@ if __name__ == "__main__":
     chainH_start = 620
     # lines of one frame
     frame_lines = 814
-    # from 37 to 75
-    frame_index = int(sys.argv[3])
+    # from 38 to 76
+    frame_index = int(sys.argv[3]) - 1
     # output pdb (next step's input)
     output_pdb = open(sys.argv[4], 'w')
     mode_start = frame_index * frame_lines
