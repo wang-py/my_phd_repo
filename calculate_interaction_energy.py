@@ -3,9 +3,16 @@ import matplotlib.pyplot as plt
 import scipy.constants as sc
 import sys
 
+# lorentz berthelot combining rule
+def LB_combining(si, sj, ei, ej):
+    sij = 0.5 * (si + sj)
+    eij = np.sqrt(ei * ej)
+
+    return sij, eij
+
 def get_lennard_jones_potential(R, epsilon, sigma):
     """
-    calculate the LJ potential between qi and qj
+    calculate the LJ potential between i and j
     ---------------------------
     R:
     distance between two charges in angstrom
