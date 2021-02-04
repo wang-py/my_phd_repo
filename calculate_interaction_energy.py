@@ -3,6 +3,29 @@ import matplotlib.pyplot as plt
 import scipy.constants as sc
 import sys
 
+def get_lennard_jones_potential(R, epsilon, sigma):
+    """
+    calculate the LJ potential between qi and qj
+    ---------------------------
+    R:
+    distance between two charges in angstrom
+
+    epsilon:
+    epsilon in LJ
+
+    sigma:
+    sigma in LJ
+
+    Returns
+    ---------------------------
+    U: float
+    LJ potential energy of the system in kJ/mol
+    """
+
+    U = 4 * epsilon * (np.power(sigma / R, 12) - np.power(sigma / R, 6))
+
+    return U
+
 def get_coulomb_potential(qij, R):
     """
     calculate the coulomb potential between qi and qj
