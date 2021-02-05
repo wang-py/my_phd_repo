@@ -54,6 +54,52 @@ def get_coulomb_potential(qij, R):
 
     return Uc
 
+def get_energy(x, topology):
+    """
+    calculate the potential energy in the system
+    ---------------------------
+    x:
+    positions of the atoms in nm
+
+    topology:
+    properties of the atoms
+
+    Returns
+    ---------------------------
+    U: float
+    potential energy of the system in kJ/mol
+    """
+    # unpacking topology
+    charge = topology[0]
+    sigma = topology[1]
+    epsilon = topology[2]
+    atom_count = x.shape[0]
+    U_sys = np.zeros(atom_count)
+    U = 0.0
+
+    for i in range(atom_count):
+        # calculate the xyz differences between all the atoms and the focus atom
+        c_diff = x - x[i] 
+        # calculate the distance
+        r_mat = np.sqrt(np.sum(np.square(c_diff), axis=-1)) 
+        # prevent division by zero
+        r_mat[i] = 1.0
+        # figure out sigma and epsilon
+        s_mat, e_mat = LB_combining(sigma[i], sigma, epsilon[i], epsilon)
+        # calculate charge
+        c_mat = charge[i] * charge
+        # prevent the self interaction
+        c_mat[i] = charge[i]
+        U_sys = force_field_potential(r_mat, c_mat, e_mat, s_mat)
+        # prevent the self interaction
+        U_sys[i] = 0 
+        U += np.sum(U_sys)
+
+    # remove duplicate interactions
+    U /= 2
+
+    return U
+
 if __name__ == "__main__":
     input_pdb = open(sys.argv[1], 'r')
     atom_index = int(sys.argv[2])
