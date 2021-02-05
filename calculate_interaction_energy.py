@@ -7,7 +7,10 @@ from biopandas.pdb import PandasPdb
 # distance cutoff function
 # TODO: write a function to sort the distances and filter out atoms that are
 # further away than cutoff distance.
-# write a helper function to just calculate the distance vector
+
+# TODO: write a function to read topology
+
+# TODO: verify file reading
 
 ppdb = PandasPdb()
 
