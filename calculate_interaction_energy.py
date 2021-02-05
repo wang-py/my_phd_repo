@@ -142,4 +142,4 @@ if __name__ == "__main__":
     input_pdb = sys.argv[1]
     coords = parse_pdb(input_pdb)
     atom_index = int(sys.argv[2])
-    exit()
+    D = get_distance_vec(500, coords)
