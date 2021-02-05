@@ -2,11 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.constants as sc
 import sys
+from biopandas.pdb import PandasPdb
 
 # distance cutoff function
 # TODO: write a function to sort the distances and filter out atoms that are
 # further away than cutoff distance.
 # write a helper function to just calculate the distance vector
+
+ppdb = PandasPdb()
+
+def parse_pdb(input_pdb):
+    ppdb.read_pdb(input_pdb)
+    coords = ppdb.df['ATOM'][['x_coord', 'y_coord', 'z_coord']]
+    coords = coords.to_numpy()
+    return coords
 
 def get_distance_vec(xi, x):
     """
@@ -130,6 +139,7 @@ def get_energy(x, topology):
     return U
 
 if __name__ == "__main__":
-    input_pdb = open(sys.argv[1], 'r')
+    input_pdb = sys.argv[1]
+    coords = parse_pdb(input_pdb)
     atom_index = int(sys.argv[2])
     exit()
