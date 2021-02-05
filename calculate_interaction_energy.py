@@ -3,6 +3,35 @@ import matplotlib.pyplot as plt
 import scipy.constants as sc
 import sys
 
+# distance cutoff function
+# TODO: write a function to sort the distances and filter out atoms that are
+# further away than cutoff distance.
+# write a helper function to just calculate the distance vector
+
+def get_distance_vec(xi, x):
+    """
+    calculate the distance vector between xi and x
+    ---------------------------------------- 
+    xi:
+    index of coordinates of atom i 
+
+    x:
+    Nx3 vector of all coordinates in angstroms
+    Returns
+    ---------------------------------------- 
+    r: float
+    Nx1 vector of all distances in angstroms
+
+    """
+    # calculate the xyz differences between all the atoms and the focus atom
+    c_diff = x - x[xi] 
+    # calculate the distance
+    r = np.sqrt(np.sum(np.square(c_diff), axis=-1)) 
+    # prevent division by zero
+    r[xi] = 1.0
+
+    return r
+
 # lorentz berthelot combining rule
 def LB_combining(si, sj, ei, ej):
     sij = 0.5 * (si + sj)
