@@ -1,5 +1,5 @@
 # sigma in angstrom, epsilon in kJ/mol
 # taken from gromacs tip3p topology
 # atomtype sigma epsilon charge
-O 3.15057422683    0.63639    -0.834
-H 0                0           0.417
+OW 3.15057422683    0.63639    -0.834
+HW 0                0           0.417
