@@ -10,9 +10,28 @@ from biopandas.pdb import PandasPdb
 
 # TODO: write a function to read topology
 
+def read_topology(top_file):
+    topology = []
+    entry = []
+    for line in top_file:
+        line_arr = line.split()
+        if line_arr[0] == '#':
+            continue
+        else:
+            atomtype = line_arr[0]
+            sigma = float(line_arr[1])
+            epsilon = float(line_arr[2])
+            charge = float(line_arr[3])
+            entry = [atomtype, sigma, epsilon, charge]
+            topology.append(entry)
+    
+    topology = np.array(topology)
+    return topology
+
 # TODO: verify file reading
 
 ppdb = PandasPdb()
+# TODO: function that assigns charges and LJ parameters to different atoms
 
 def parse_pdb(input_pdb):
     ppdb.read_pdb(input_pdb)
