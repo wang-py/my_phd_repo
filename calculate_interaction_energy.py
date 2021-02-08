@@ -127,49 +127,51 @@ def get_coulomb_potential(qij, R):
 
     return Uc
 
-def get_energy(x, topology):
+def force_field_potential(R, qij, epsilon, sigma):
+    LJ_potential = get_lennard_jones_potential(R, epsilon, sigma)
+    coulomb_potential = get_coulomb_potential(qij, R)
+    total_potential = LJ_potential + coulomb_potential
+
+    return total_potential
+
+def get_energy(coords_params, i):
     """
     calculate the potential energy in the system
     ---------------------------
-    x:
-    positions of the atoms in nm
+    coords_params:
+    positions of the atoms in A with LJ and coulomb parameters
 
-    topology:
-    properties of the atoms
+    i:
+    index of atom to calculate interaction energy
 
     Returns
     ---------------------------
     U: float
-    potential energy of the system in kJ/mol
+    potential energy of the focus atom in kJ/mol
     """
     # unpacking topology
-    charge = topology[0]
-    sigma = topology[1]
-    epsilon = topology[2]
-    atom_count = x.shape[0]
-    U_sys = np.zeros(atom_count)
-    U = 0.0
+    sigma = coords_params[:,3]
+    epsilon = coords_params[:,4]
+    charge = coords_params[:,5]
+    x = coords_params[:, 0:3]
 
-    for i in range(atom_count):
-        # calculate the xyz differences between all the atoms and the focus atom
-        c_diff = x - x[i] 
-        # calculate the distance
-        r_mat = np.sqrt(np.sum(np.square(c_diff), axis=-1)) 
-        # prevent division by zero
-        r_mat[i] = 1.0
-        # figure out sigma and epsilon
-        s_mat, e_mat = LB_combining(sigma[i], sigma, epsilon[i], epsilon)
-        # calculate charge
-        c_mat = charge[i] * charge
-        # prevent the self interaction
-        c_mat[i] = charge[i]
-        U_sys = force_field_potential(r_mat, c_mat, e_mat, s_mat)
-        # prevent the self interaction
-        U_sys[i] = 0 
-        U += np.sum(U_sys)
-
-    # remove duplicate interactions
-    U /= 2
+    # calculate the xyz differences between all the atoms and the focus atom
+    c_diff = x - x[i] 
+    # calculate the distance
+    r_mat = np.sqrt(np.sum(np.square(c_diff), axis=-1)) 
+    # prevent division by zero
+    r_mat[i] = 1.0
+    # figure out sigma and epsilon
+    s_mat, e_mat = LB_combining(sigma[i], sigma, epsilon[i], epsilon)
+    # calculate charge
+    c_mat = charge[i] * charge
+    # prevent the self interaction
+    c_mat[i] = charge[i]
+    U_sys = force_field_potential(r_mat, c_mat, e_mat, s_mat)
+    # prevent the self interaction
+    U_sys[i] = 0
+    # total interaction energy
+    U = np.sum(U_sys)
 
     return U
 
@@ -180,4 +182,6 @@ if __name__ == "__main__":
     topol = read_topology(topology_file)
     coords_params = assign_params(coords, topol)
     atom_index = int(sys.argv[3])
-    D = get_distance_vec(500, coords)
+    #D = get_distance_vec(500, coords)
+    # 7290 is at the center of the box
+    E = get_energy(coords_params, 7290)
