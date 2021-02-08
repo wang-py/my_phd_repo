@@ -14,7 +14,7 @@ def apply_cutoff(r_cutoff, atom_dist):
 # TODO: write a function to read topology
 
 def read_topology(top_file):
-    topology = []
+    topology = {}
     entry = []
     for line in top_file:
         line_arr = line.split()
@@ -25,8 +25,8 @@ def read_topology(top_file):
             sigma = float(line_arr[1])
             epsilon = float(line_arr[2])
             charge = float(line_arr[3])
-            entry = [atomtype, sigma, epsilon, charge]
-            topology.append(entry)
+            entry = [sigma, epsilon, charge]
+            topology[atomtype] = entry
     
     return topology
 
@@ -34,14 +34,23 @@ def read_topology(top_file):
 
 ppdb = PandasPdb()
 # TODO: function that assigns charges and LJ parameters to different atoms
-def assign_params(atoms, topology):
-    pass
+def assign_params(atom_df, topology):
+    atom_coords = atom_df[['x_coord', 'y_coord', 'z_coord']].to_numpy()
+    atom_count = atom_coords.shape[0]
+    atom_xyz = atom_coords.shape[1]
+    # create empty array to store atom xyz and interaction parameters
+    coords_params = np.zeros([atom_count, atom_xyz + 3])
+    for i in range(atom_count):
+        atom_name = atom_df.iloc[i]['atom_name']
+        params = np.array(topology[atom_name])
+        coords_params[i] = np.append(atom_coords[i], params)
+    
+    return coords_params
 
 def parse_pdb(input_pdb):
     ppdb.read_pdb(input_pdb)
-    coords = ppdb.df['ATOM'][['x_coord', 'y_coord', 'z_coord']]
-    coords = coords.to_numpy()
-    return coords
+    atom_df = ppdb.df['ATOM'][['atom_name','x_coord', 'y_coord', 'z_coord']]
+    return atom_df
 
 def get_distance_vec(xi, x):
     """
@@ -169,5 +178,6 @@ if __name__ == "__main__":
     coords = parse_pdb(input_pdb)
     topology_file = open(sys.argv[2], 'r')
     topol = read_topology(topology_file)
+    coords_params = assign_params(coords, topol)
     atom_index = int(sys.argv[3])
     D = get_distance_vec(500, coords)

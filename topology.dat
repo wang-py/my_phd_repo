@@ -2,4 +2,5 @@
 # taken from gromacs tip3p topology
 # atomtype sigma epsilon charge
 OW 3.15057422683    0.63639    -0.834
-HW 0                0           0.417
+HW1 0                0           0.417
+HW2 0                0           0.417
