@@ -184,4 +184,9 @@ if __name__ == "__main__":
     atom_index = int(sys.argv[3])
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
-    E = get_energy(coords_params, 7290)
+    E_O = get_energy(coords_params, 7290)
+    E_H1 = get_energy(coords_params, 7291)
+    E_H2 = get_energy(coords_params, 7292)
+    E_H2O = E_O+E_H1+E_H2
+    print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
+    print("E_H2O is %f kJ/mol"%E_H2O)
