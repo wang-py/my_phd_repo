@@ -11,8 +11,6 @@ from biopandas.pdb import PandasPdb
 def apply_cutoff(r_cutoff, atom_dist):
     pass
 
-# TODO: write a function to read topology
-
 def read_topology(top_file):
     topology = {}
     entry = []
@@ -32,8 +30,6 @@ def read_topology(top_file):
 
 # TODO: verify file reading
 
-ppdb = PandasPdb()
-# TODO: function that assigns charges and LJ parameters to different atoms
 def assign_params(atom_df, topology):
     atom_coords = atom_df[['x_coord', 'y_coord', 'z_coord']].to_numpy()
     atom_count = atom_coords.shape[0]
@@ -47,7 +43,7 @@ def assign_params(atom_df, topology):
     
     return coords_params
 
-def parse_pdb(input_pdb):
+def parse_pdb(ppdb, input_pdb):
     ppdb.read_pdb(input_pdb)
     atom_df = ppdb.df['ATOM'][['atom_name','x_coord', 'y_coord', 'z_coord']]
     return atom_df
@@ -176,8 +172,9 @@ def get_energy(coords_params, i):
     return U
 
 if __name__ == "__main__":
+    ppdb = PandasPdb()
     input_pdb = sys.argv[1]
-    coords = parse_pdb(input_pdb)
+    coords = parse_pdb(ppdb, input_pdb)
     topology_file = open(sys.argv[2], 'r')
     topol = read_topology(topology_file)
     coords_params = assign_params(coords, topol)
