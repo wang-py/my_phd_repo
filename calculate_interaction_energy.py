@@ -8,6 +8,9 @@ from biopandas.pdb import PandasPdb
 # TODO: write a function to sort the distances and filter out atoms that are
 # further away than cutoff distance.
 
+def apply_cutoff(r_cutoff, atom_dist):
+    pass
+
 # TODO: write a function to read topology
 
 def read_topology(top_file):
@@ -25,13 +28,14 @@ def read_topology(top_file):
             entry = [atomtype, sigma, epsilon, charge]
             topology.append(entry)
     
-    topology = np.array(topology)
     return topology
 
 # TODO: verify file reading
 
 ppdb = PandasPdb()
 # TODO: function that assigns charges and LJ parameters to different atoms
+def assign_params(atoms, topology):
+    pass
 
 def parse_pdb(input_pdb):
     ppdb.read_pdb(input_pdb)
@@ -163,5 +167,7 @@ def get_energy(x, topology):
 if __name__ == "__main__":
     input_pdb = sys.argv[1]
     coords = parse_pdb(input_pdb)
-    atom_index = int(sys.argv[2])
+    topology_file = open(sys.argv[2], 'r')
+    topol = read_topology(topology_file)
+    atom_index = int(sys.argv[3])
     D = get_distance_vec(500, coords)
