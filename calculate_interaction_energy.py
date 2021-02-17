@@ -145,7 +145,7 @@ def get_energy(coords_params, resi):
     Returns
     ---------------------------
     U: float
-    potential energy of the focus atom in kJ/mol
+    potential energy of the focus molecule in kJ/mol
     """
     # unpacking topology
     sigma = coords_params[:,5]
