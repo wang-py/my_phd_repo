@@ -31,7 +31,8 @@ def read_topology(top_file):
 # TODO: verify file reading
 
 def assign_params(atom_df, topology):
-    atom_coords = atom_df[['x_coord', 'y_coord', 'z_coord']].to_numpy()
+    atom_coords = atom_df[['x_coord', 'y_coord', 'z_coord',\
+        'residue_number']].to_numpy()
     atom_count = atom_coords.shape[0]
     atom_xyz = atom_coords.shape[1]
     # create empty array to store atom xyz and interaction parameters
@@ -45,7 +46,8 @@ def assign_params(atom_df, topology):
 
 def parse_pdb(ppdb, input_pdb):
     ppdb.read_pdb(input_pdb)
-    atom_df = ppdb.df['ATOM'][['atom_name','x_coord', 'y_coord', 'z_coord']]
+    atom_df = ppdb.df['ATOM']\
+        [['atom_name','x_coord', 'y_coord', 'z_coord', 'residue_number']]
     return atom_df
 
 def get_distance_vec(xi, x):
@@ -163,6 +165,8 @@ def get_energy(coords_params, i):
     c_mat = charge[i] * charge
     # prevent the self interaction
     c_mat[i] = charge[i]
+    c_mat[i-1] = 0
+    c_mat[i-2] = 0
     U_sys = force_field_potential(r_mat, c_mat, e_mat, s_mat)
     # prevent the self interaction
     U_sys[i] = 0
@@ -178,12 +182,14 @@ if __name__ == "__main__":
     topology_file = open(sys.argv[2], 'r')
     topol = read_topology(topology_file)
     coords_params = assign_params(coords, topol)
-    atom_index = int(sys.argv[3])
+    residue_index = int(sys.argv[3])
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
-    E_O = get_energy(coords_params, 7290)
-    E_H1 = get_energy(coords_params, 7291)
-    E_H2 = get_energy(coords_params, 7292)
+    O_i = 12
+    for i in range(3):
+        E_O = get_energy(coords_params, O_i)
+        E_H1 = get_energy(coords_params, O_i+1)
+        E_H2 = get_energy(coords_params, O_i+2)
     E_H2O = E_O+E_H1+E_H2
     print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
     print("E_H2O is %f kJ/mol"%E_H2O)
