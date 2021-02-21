@@ -8,21 +8,28 @@ from biopandas.pdb import PandasPdb
 # TODO: write a function to sort the distances and filter out atoms that are
 # further away than cutoff distance.
 
-def apply_cutoff(r_cutoff, atom_dist):
+def apply_cutoff(r_cutoff, atom_index, coords_params):
     """
     apply distance cutoff for coulomb interactions
     ----------------------------------------------
     r_cutoff: float
     cutoff distance in angstroms
 
-    atom_dist: ndarray
-    vector of all distances
+    atom_index: int
+    index of focus atom
 
+    coords_params: ndarray
+    parameters of atoms
+
+    Returns: 
     ----------------------------------------------
-    Returns: truncated vector of distances within cutoff range
+    trunc_params: ndarray
+    truncated vector of distances within cutoff range
     """
-    trunc_dist = np.array([x < r_cutoff for x in atom_dist])
-    return trunc_dist
+    atom_dist = get_distance_vec(atom_index, coords_params[0:3])
+    coords_params_dist = np.append(coords_params, atom_dist)
+    trunc_params = np.array([x[3] < r_cutoff for x in coords_params_dist])
+    return trunc_params
 
 def read_topology(top_file):
     topology = {}
