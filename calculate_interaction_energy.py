@@ -166,7 +166,7 @@ def get_energy(coords_params, resi):
         res_sigma[j] = sigma[first_atom_i + j]
         res_epsilon[j] = epsilon[first_atom_i + j]
         res_charge[j] = charge[first_atom_i + j]
-        sigma[first_atom_i + j] = 0
+        #sigma[first_atom_i + j] = 0
         epsilon[first_atom_i + j] = 0
         charge[first_atom_i + j] = 0
 
