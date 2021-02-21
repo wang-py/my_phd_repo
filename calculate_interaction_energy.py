@@ -188,6 +188,7 @@ def get_energy(coords_params, resi):
         #c_mat[atom_i] = charge[atom_i]
         U_sys = force_field_potential(r_mat, c_mat, e_mat, s_mat)
         # prevent the self interaction
+        # NOTE: might be unnecessary since epsilon and charge are already zero
         U_sys[atom_i] = 0
         # total interaction energy
         U += np.sum(U_sys)
