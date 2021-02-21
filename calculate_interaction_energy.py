@@ -154,9 +154,11 @@ def get_energy(coords_params, resi):
     x = coords_params[:, 0:3]
     # all atoms in residue i
     res_x = np.array([x for x in coords_params if x[3] == resi])
+    # index of the first atom in the molecule
     first_atom_i = int(res_x[0,4] - 1)
-
+    # number of atoms in this molecule
     res_atom_count = res_x.shape[0]
+    # separate topology arrays for the molecule
     res_sigma = np.zeros(res_atom_count)
     res_epsilon = np.zeros(res_atom_count)
     res_charge = np.zeros(res_atom_count)
@@ -202,7 +204,7 @@ if __name__ == "__main__":
     residue_index = int(sys.argv[3])
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
-    H2O_i = 2431
+    H2O_i = 2413
     E_H2O = get_energy(coords_params, H2O_i)
     #print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
     print("E_H2O is %f kJ/mol"%E_H2O)
