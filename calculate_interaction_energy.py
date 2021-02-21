@@ -32,6 +32,18 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
     return trunc_params
 
 def read_topology(top_file):
+    """
+    read in topology from file
+    ----------------------------------------------
+    top_file: file obj
+    file that contains information about topology
+
+    Returns:
+    ----------------------------------------------
+    topology: ndarray
+    array that contains topology info about atoms
+    """
+
     topology = {}
     entry = []
     for line in top_file:
@@ -51,6 +63,20 @@ def read_topology(top_file):
 # TODO: verify file reading
 
 def assign_params(atom_df, topology):
+    """
+    assign parameters to atoms
+    ----------------------------------------------
+    atom_df: Pandas Dataframe
+    pdb data frame of all atoms
+
+    topology: ndarray
+    array of atom topology
+
+    Returns:
+    ----------------------------------------------
+    coords_params:
+    array that contains all atom information
+    """
     atom_coords = atom_df[['x_coord', 'y_coord', 'z_coord',\
         'residue_number', 'atom_number']].to_numpy()
     atom_count = atom_coords.shape[0]
@@ -65,6 +91,20 @@ def assign_params(atom_df, topology):
     return coords_params
 
 def parse_pdb(ppdb, input_pdb):
+    """
+    read pdb file using biopandas
+    ----------------------------------------------
+    ppdb: ppdb obj
+    pandas pdb object
+
+    input_pdb: file obj
+    input pdb file
+
+    Returns:
+    ----------------------------------------------
+    atom_df: pandas dataframe
+    dataframe that contains all information needed for energy calculation
+    """
     ppdb.read_pdb(input_pdb)
     atom_df = ppdb.df['ATOM']\
         [['atom_number', 'atom_name','x_coord', 'y_coord', 'z_coord', 'residue_number']]
