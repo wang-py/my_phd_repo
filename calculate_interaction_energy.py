@@ -192,7 +192,7 @@ def force_field_potential(R, qij, epsilon, sigma):
 
     return total_potential
 
-def get_energy(coords_params, resi):
+def get_energy(coords_params, resi, r_cutoff=None):
     """
     calculate the potential energy in the system
     ---------------------------
@@ -201,6 +201,9 @@ def get_energy(coords_params, resi):
 
     resi:
     index of residue to calculate interaction energy
+    
+    r_cutoff: float
+    cutoff distance in angstroms
 
     Returns
     ---------------------------
@@ -242,6 +245,13 @@ def get_energy(coords_params, resi):
         r_mat[atom_i] = 1.0
         # figure out sigma and epsilon
         s_mat, e_mat = LB_combining(res_sigma[i], sigma, res_epsilon[i], epsilon)
+        # distance cutoff for coulomb interaction
+        if r_cutoff:
+            cutoff_atoms = np.where(r_mat > r_cutoff)[0]
+            cutoff = np.any(cutoff_atoms)
+            if cutoff:
+                for c in cutoff_atoms:
+                    charge[c] = 0
         # calculate charge
         c_mat = res_charge[i] * charge
         # prevent the self interaction
@@ -266,6 +276,6 @@ if __name__ == "__main__":
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
     H2O_i = 2431
-    E_H2O = get_energy(coords_params, H2O_i)
+    E_H2O = get_energy(coords_params, H2O_i, 6)
     #print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
     print("E_H2O is %f kJ/mol"%E_H2O)
