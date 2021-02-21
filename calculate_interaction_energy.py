@@ -166,8 +166,8 @@ def get_energy(coords_params, resi):
         res_sigma[j] = sigma[first_atom_i + j]
         res_epsilon[j] = epsilon[first_atom_i + j]
         res_charge[j] = charge[first_atom_i + j]
-        #sigma[first_atom_i + j] = 0
-        #epsilon[first_atom_i + j] = 0
+        sigma[first_atom_i + j] = 0
+        epsilon[first_atom_i + j] = 0
         charge[first_atom_i + j] = 0
 
     U = 0
@@ -181,7 +181,7 @@ def get_energy(coords_params, resi):
         # prevent division by zero
         r_mat[atom_i] = 1.0
         # figure out sigma and epsilon
-        s_mat, e_mat = LB_combining(sigma[atom_i], sigma, epsilon[atom_i], epsilon)
+        s_mat, e_mat = LB_combining(res_sigma[i], sigma, res_epsilon[i], epsilon)
         # calculate charge
         c_mat = res_charge[i] * charge
         # prevent the self interaction
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     residue_index = int(sys.argv[3])
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
-    H2O_i = 2413
+    H2O_i = 2431
     E_H2O = get_energy(coords_params, H2O_i)
     #print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
     print("E_H2O is %f kJ/mol"%E_H2O)
