@@ -9,7 +9,20 @@ from biopandas.pdb import PandasPdb
 # further away than cutoff distance.
 
 def apply_cutoff(r_cutoff, atom_dist):
-    pass
+    """
+    apply distance cutoff for coulomb interactions
+    ----------------------------------------------
+    r_cutoff: float
+    cutoff distance in angstroms
+
+    atom_dist: ndarray
+    vector of all distances
+
+    ----------------------------------------------
+    Returns: truncated vector of distances within cutoff range
+    """
+    trunc_dist = np.array([x < r_cutoff for x in atom_dist])
+    return trunc_dist
 
 def read_topology(top_file):
     topology = {}
