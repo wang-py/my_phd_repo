@@ -4,31 +4,6 @@ import scipy.constants as sc
 import sys
 from biopandas.pdb import PandasPdb
 
-# distance cutoff function
-
-def apply_cutoff(r_cutoff, atom_index, coords_params):
-    """
-    apply distance cutoff for coulomb interactions
-    ----------------------------------------------
-    r_cutoff: float
-    cutoff distance in angstroms
-
-    atom_index: int
-    index of focus atom
-
-    coords_params: ndarray
-    parameters of atoms
-
-    Returns: 
-    ----------------------------------------------
-    trunc_params: ndarray
-    truncated vector of distances within cutoff range
-    """
-    atom_dist = get_distance_vec(atom_index, coords_params[0:3])
-    coords_params_dist = np.append(coords_params, atom_dist)
-    trunc_params = np.array([x[3] < r_cutoff for x in coords_params_dist])
-    return trunc_params
-
 def read_topology(top_file):
     """
     read in topology from file
@@ -190,6 +165,59 @@ def force_field_potential(R, qij, epsilon, sigma):
 
     return total_potential
 
+# distance cutoff function
+def apply_cutoff(r_cutoff, atom_index, coords_params):
+    """
+    apply distance cutoff for coulomb interactions
+    ----------------------------------------------
+    r_cutoff: float
+    cutoff distance in angstroms
+
+    atom_index: int
+    index of focus atom
+
+    coords_params: ndarray
+    parameters of atoms
+
+    Returns: 
+    ----------------------------------------------
+    trunc_params: ndarray
+    truncated vector of distances within cutoff range
+    """
+    atom_dist = get_distance_vec(atom_index, coords_params[:,0:3])
+    coords_params_dist = np.c_[coords_params, atom_dist]
+    within_cutoff = np.array([x[-1] < r_cutoff for x in coords_params_dist])
+    trunc_params = coords_params[within_cutoff]
+
+    return trunc_params
+
+def turn_off_interaction(resi, coords_params):
+    # unpacking topology
+    sigma = coords_params[:,5]
+    epsilon = coords_params[:,6]
+    charge = coords_params[:,7]
+    x = coords_params[:, 0:3]
+    # all atoms in residue i
+    res_x = np.array([x for x in coords_params if x[3] == resi])
+    # index of the first atom in the molecule
+    first_atom_i = int(res_x[0,4] - 1)
+    # number of atoms in this molecule
+    res_atom_count = res_x.shape[0]
+    # separate topology arrays for the molecule
+    res_sigma = np.zeros(res_atom_count)
+    res_epsilon = np.zeros(res_atom_count)
+    res_charge = np.zeros(res_atom_count)
+    for j in range(res_atom_count):
+        res_atom_i = first_atom_i + j
+        res_sigma[j] = sigma[res_atom_i]
+        res_epsilon[j] = epsilon[res_atom_i]
+        res_charge[j] = charge[res_atom_i]
+        # no interaction within molecule
+        coords_params[res_atom_i, 6] = 0
+        coords_params[res_atom_i, 7] = 0
+    
+    return coords_params, res_x, res_sigma, res_epsilon, res_charge
+
 # TODO: distance cutoff should be different for every atom
 # atoms of the same molecule should have zero charge wrt each other
 def get_energy(coords_params, resi, r_cutoff=None):
@@ -210,33 +238,24 @@ def get_energy(coords_params, resi, r_cutoff=None):
     U: float
     potential energy of the focus molecule in kJ/mol
     """
-    # unpacking topology
-    sigma = coords_params[:,5]
-    epsilon = coords_params[:,6]
-    charge = coords_params[:,7]
-    x = coords_params[:, 0:3]
-    # all atoms in residue i
-    res_x = np.array([x for x in coords_params if x[3] == resi])
+    # turn off inteaction within molecule
+    coords_params, res_x, res_sigma, res_epsilon, res_charge = \
+        turn_off_interaction(resi, coords_params)
+
+    res_atom_count = res_x.shape[0]
     # index of the first atom in the molecule
     first_atom_i = int(res_x[0,4] - 1)
-    # number of atoms in this molecule
-    res_atom_count = res_x.shape[0]
-    # separate topology arrays for the molecule
-    res_sigma = np.zeros(res_atom_count)
-    res_epsilon = np.zeros(res_atom_count)
-    res_charge = np.zeros(res_atom_count)
-    for j in range(res_atom_count):
-        res_sigma[j] = sigma[first_atom_i + j]
-        res_epsilon[j] = epsilon[first_atom_i + j]
-        res_charge[j] = charge[first_atom_i + j]
-        #sigma[first_atom_i + j] = 0
-        epsilon[first_atom_i + j] = 0
-        charge[first_atom_i + j] = 0
 
     U = 0
     for i in range(res_atom_count):
         # indexing through the residue
         atom_i = first_atom_i + i
+        coords_params_cutoff = apply_cutoff(r_cutoff, atom_i, coords_params)
+        # unpacking topology
+        sigma = coords_params_cutoff[:,5]
+        epsilon = coords_params_cutoff[:,6]
+        charge = coords_params_cutoff[:,7]
+        x = coords_params_cutoff[:, 0:3]
         # calculate the xyz differences between all the atoms and the focus atom
         c_diff = x - res_x[i, 0:3] 
         # calculate the distance
@@ -245,13 +264,6 @@ def get_energy(coords_params, resi, r_cutoff=None):
         r_mat[atom_i] = 1.0
         # figure out sigma and epsilon
         s_mat, e_mat = LB_combining(res_sigma[i], sigma, res_epsilon[i], epsilon)
-        # distance cutoff for coulomb interaction
-        if r_cutoff:
-            cutoff_atoms = np.where(r_mat > r_cutoff)[0]
-            cutoff = np.any(cutoff_atoms)
-            if cutoff:
-                for c in cutoff_atoms:
-                    charge[c] = 0
         # calculate charge
         c_mat = res_charge[i] * charge
         # prevent the self interaction
