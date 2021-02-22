@@ -188,8 +188,11 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
     coords_params_dist = np.c_[coords_params, atom_dist]
     within_cutoff = np.array([x[-1] < r_cutoff for x in coords_params_dist])
     trunc_params = coords_params[within_cutoff]
+    # prevent division by zero
+    atom_dist[atom_index] = 1.0
+    trunc_atom_dist = atom_dist[within_cutoff]
 
-    return trunc_params
+    return trunc_params, trunc_atom_dist
 
 def turn_off_interaction(resi, coords_params):
     # unpacking topology
@@ -250,18 +253,16 @@ def get_energy(coords_params, resi, r_cutoff=None):
     for i in range(res_atom_count):
         # indexing through the residue
         atom_i = first_atom_i + i
-        coords_params_cutoff = apply_cutoff(r_cutoff, atom_i, coords_params)
+        if r_cutoff:
+            coords_params_cutoff, r_mat = apply_cutoff(r_cutoff, atom_i, coords_params.copy())
+        else:
+            coords_params_cutoff = coords_params
+            x = coords_params_cutoff[:, 0:3]
+            r_mat = get_distance_vec(atom_i, x)
         # unpacking topology
         sigma = coords_params_cutoff[:,5]
         epsilon = coords_params_cutoff[:,6]
         charge = coords_params_cutoff[:,7]
-        x = coords_params_cutoff[:, 0:3]
-        # calculate the xyz differences between all the atoms and the focus atom
-        c_diff = x - res_x[i, 0:3] 
-        # calculate the distance
-        r_mat = np.sqrt(np.sum(np.square(c_diff), axis=-1)) 
-        # prevent division by zero
-        r_mat[atom_i] = 1.0
         # figure out sigma and epsilon
         s_mat, e_mat = LB_combining(res_sigma[i], sigma, res_epsilon[i], epsilon)
         # calculate charge
@@ -288,6 +289,11 @@ if __name__ == "__main__":
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
     H2O_i = residue_index
-    E_H2O = get_energy(coords_params, H2O_i, 12)
+    r_cutoff = np.linspace(0, 50, 51)
+    E_H2O = np.zeros([r_cutoff.shape[0]])
+    for i in range(r_cutoff.shape[0]):
+        E_H2O[i] = get_energy(coords_params.copy(), H2O_i, r_cutoff[i])
+    plt.plot(r_cutoff, E_H2O, 'o')
+    plt.show()
     #print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
     print("E_H2O is %f kJ/mol"%E_H2O)
