@@ -5,8 +5,6 @@ import sys
 from biopandas.pdb import PandasPdb
 
 # distance cutoff function
-# TODO: write a function to sort the distances and filter out atoms that are
-# further away than cutoff distance.
 
 def apply_cutoff(r_cutoff, atom_index, coords_params):
     """
@@ -192,6 +190,8 @@ def force_field_potential(R, qij, epsilon, sigma):
 
     return total_potential
 
+# TODO: distance cutoff should be different for every atom
+# atoms of the same molecule should have zero charge wrt each other
 def get_energy(coords_params, resi, r_cutoff=None):
     """
     calculate the potential energy in the system
@@ -275,7 +275,7 @@ if __name__ == "__main__":
     residue_index = int(sys.argv[3])
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
-    H2O_i = 2431
-    E_H2O = get_energy(coords_params, H2O_i, 6)
+    H2O_i = residue_index
+    E_H2O = get_energy(coords_params, H2O_i, 12)
     #print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
     print("E_H2O is %f kJ/mol"%E_H2O)
