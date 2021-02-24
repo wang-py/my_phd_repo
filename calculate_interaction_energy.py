@@ -289,13 +289,16 @@ if __name__ == "__main__":
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
     H2O_i = residue_index
-    r_cutoff = np.linspace(5, 30, 51)
+    r_cutoff = np.linspace(0.5, 50.5, 51)
     E_H2O = np.zeros([r_cutoff.shape[0]])
     E_H2O_pair_wise = get_energy(coords_params.copy(), H2O_i)
     for i in range(r_cutoff.shape[0]):
         E_H2O[i] = get_energy(coords_params.copy(), H2O_i, r_cutoff[i])
     plt.plot(r_cutoff, E_H2O, 'o')
-    plt.hlines(E_H2O_pair_wise, r_cutoff[0], r_cutoff[-1], linestyle='--')
+    plt.hlines(E_H2O_pair_wise, r_cutoff[0], r_cutoff[-1], linestyle='--',label="pairwise coulomb+LJ:%.2f kJ/mol"%E_H2O_pair_wise)
+    plt.xlabel("cutoff distance [A]")
+    plt.ylabel("nonbonded interaction energy [kJ/mol]")
+    plt.legend()
     plt.show()
     #print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
-    #print("E_H2O is %f kJ/mol"%E_H2O)
+    print("E_H2O is %f kJ/mol"%E_H2O_pair_wise)
