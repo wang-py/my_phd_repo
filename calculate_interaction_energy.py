@@ -161,9 +161,9 @@ def get_coulomb_potential(qij, R):
 def force_field_potential(R, qij, epsilon, sigma):
     LJ_potential = get_lennard_jones_potential(R, epsilon, sigma)
     coulomb_potential = get_coulomb_potential(qij, R)
-    total_potential = LJ_potential + coulomb_potential
+    #total_potential = LJ_potential + coulomb_potential
 
-    return total_potential
+    return LJ_potential, coulomb_potential
 
 # distance cutoff function
 def apply_cutoff(r_cutoff, atom_index, coords_params):
@@ -249,7 +249,8 @@ def get_energy(coords_params, resi, r_cutoff=None):
     # index of the first atom in the molecule
     first_atom_i = int(res_x[0,4] - 1)
 
-    U = 0
+    U_sys_LJ = 0
+    U_sys_C = 0
     for i in range(res_atom_count):
         # indexing through the residue
         atom_i = first_atom_i + i
@@ -269,14 +270,15 @@ def get_energy(coords_params, resi, r_cutoff=None):
         c_mat = res_charge[i] * charge
         # prevent the self interaction
         #c_mat[atom_i] = charge[atom_i]
-        U_sys = force_field_potential(r_mat, c_mat, e_mat, s_mat)
+        U_LJ, U_C = force_field_potential(r_mat, c_mat, e_mat, s_mat)
         # prevent the self interaction
         # NOTE: might be unnecessary since epsilon and charge are already zero
         #U_sys[atom_i] = 0
         # total interaction energy
-        U += np.sum(U_sys)
+        U_sys_LJ += np.sum(U_LJ)
+        U_sys_C += np.sum(U_C)
 
-    return U
+    return U_sys_LJ, U_sys_C
 
 if __name__ == "__main__":
     ppdb = PandasPdb()
@@ -291,9 +293,9 @@ if __name__ == "__main__":
     H2O_i = residue_index
     r_cutoff = np.linspace(0.5, 50.5, 51)
     E_H2O = np.zeros([r_cutoff.shape[0]])
-    E_H2O_pair_wise = get_energy(coords_params.copy(), H2O_i)
+    E_H2O_pair_wise = np.sum(get_energy(coords_params.copy(), H2O_i))
     for i in range(r_cutoff.shape[0]):
-        E_H2O[i] = get_energy(coords_params.copy(), H2O_i, r_cutoff[i])
+        E_H2O[i] = np.sum(get_energy(coords_params.copy(), H2O_i, r_cutoff[i]))
     plt.plot(r_cutoff, E_H2O, 'o')
     plt.hlines(E_H2O_pair_wise, r_cutoff[0], r_cutoff[-1], linestyle='--',label="pairwise coulomb+LJ:%.2f kJ/mol"%E_H2O_pair_wise)
     plt.xlabel("cutoff distance [A]")
