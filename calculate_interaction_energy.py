@@ -238,8 +238,11 @@ def get_energy(coords_params, resi, r_cutoff=None):
 
     Returns
     ---------------------------
-    U: float
-    potential energy of the focus molecule in kJ/mol
+    U_sys_LJ: float
+    Lennard-Jones energy of the focus molecule in kJ/mol
+
+    U_sys_C: float
+    Coulomb energy of the focus molecule in kJ/mol
     """
     # turn off inteaction within molecule
     coords_params, res_x, res_sigma, res_epsilon, res_charge = \
