@@ -252,8 +252,9 @@ def get_energy(coords_params, resi, r_cutoff=None):
     # index of the first atom in the molecule
     first_atom_i = int(res_x[0,4] - 1)
 
-    U_sys_LJ = 0
-    U_sys_C = 0
+    U_sys_LJ = 0.0
+    U_sys_C = 0.0
+    total_charge = 0.0
     for i in range(res_atom_count):
         # indexing through the residue
         atom_i = first_atom_i + i
@@ -267,6 +268,8 @@ def get_energy(coords_params, resi, r_cutoff=None):
         sigma = coords_params_cutoff[:,5]
         epsilon = coords_params_cutoff[:,6]
         charge = coords_params_cutoff[:,7]
+        # figure out total charge within cutoff range
+        total_charge += np.sum(charge)
         # figure out sigma and epsilon
         s_mat, e_mat = LB_combining(res_sigma[i], sigma, res_epsilon[i], epsilon)
         # calculate charge
@@ -281,7 +284,7 @@ def get_energy(coords_params, resi, r_cutoff=None):
         U_sys_LJ += np.sum(U_LJ)
         U_sys_C += np.sum(U_C)
 
-    return U_sys_LJ, U_sys_C
+    return U_sys_LJ, U_sys_C, total_charge
 
 if __name__ == "__main__":
     ppdb = PandasPdb()
@@ -297,12 +300,22 @@ if __name__ == "__main__":
     r_cutoff = np.linspace(0.5, 50.5, 51)
     E_H2O = np.zeros([r_cutoff.shape[0]])
     E_H2O_pair_wise = get_energy(coords_params.copy(), H2O_i)[1]
+    charge_H2O = np.zeros([r_cutoff.shape[0]])
+    result = np.zeros([3])
     for i in range(r_cutoff.shape[0]):
-        E_H2O[i] = get_energy(coords_params.copy(), H2O_i, r_cutoff[i])[1]
+        result = get_energy(coords_params.copy(), H2O_i, r_cutoff[i])
+        E_H2O[i] = result[1]
+        charge_H2O[i] = result[2]
+    plt.figure()
     plt.plot(r_cutoff, E_H2O, 'o')
     plt.hlines(E_H2O_pair_wise, r_cutoff[0], r_cutoff[-1], linestyle='--',label="pairwise coulomb:%.2f kJ/mol"%E_H2O_pair_wise)
     plt.xlabel("cutoff distance [A]")
     plt.ylabel("nonbonded interaction energy [kJ/mol]")
+    plt.legend()
+    plt.figure()
+    plt.plot(r_cutoff, charge_H2O, 'o')
+    plt.xlabel("cutoff distance [A]")
+    plt.ylabel("total charge")
     plt.legend()
     plt.show()
     #print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
