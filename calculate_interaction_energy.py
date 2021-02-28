@@ -33,8 +33,6 @@ def read_topology(top_file):
     
     return topology
 
-# TODO: verify file reading
-
 def assign_params(atom_df, topology):
     """
     assign parameters to atoms
