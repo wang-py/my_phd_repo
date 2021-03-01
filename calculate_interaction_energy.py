@@ -182,9 +182,18 @@ def repair_broken_molecules(trunc_params, coords_params):
     ----------------------------------------------
     updated_trunc_params: ndarray
     truncated atom list with whole molecules
-    """
 
-    return updated_trunc_params
+    within_cutoff: ndarray
+    boolean array for determining atoms within cutoff
+    """
+    # all residues in cutoff range
+    res_in_range = trunc_params[:, 3]
+
+    within_cutoff = np.array([x[3] in res_in_range for x in coords_params])
+
+    updated_trunc_params = coords_params[within_cutoff]
+
+    return updated_trunc_params, within_cutoff
 
 # distance cutoff function
 def apply_cutoff(r_cutoff, atom_index, coords_params):
@@ -207,8 +216,9 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
     """
     atom_dist = get_distance_vec(atom_index, coords_params[:,0:3])
     coords_params_dist = np.c_[coords_params, atom_dist]
-    within_cutoff = np.array([x[-1] < r_cutoff for x in coords_params_dist])
-    trunc_params = coords_params[within_cutoff]
+    atoms_within_cutoff = np.array([x[-1] < r_cutoff for x in coords_params_dist])
+    atoms_in_r = coords_params[atoms_within_cutoff]
+    res_in_r, within_cutoff = repair_broken_molecules(atoms_in_r, coords_params)
     # prevent division by zero
     atom_dist[atom_index] = 1.0
     trunc_atom_dist = atom_dist[within_cutoff]
