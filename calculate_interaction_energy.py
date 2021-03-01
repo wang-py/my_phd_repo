@@ -218,7 +218,7 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
     coords_params_dist = np.c_[coords_params, atom_dist]
     atoms_within_cutoff = np.array([x[-1] < r_cutoff for x in coords_params_dist])
     atoms_in_r = coords_params[atoms_within_cutoff]
-    res_in_r, within_cutoff = repair_broken_molecules(atoms_in_r, coords_params)
+    trunc_params, within_cutoff = repair_broken_molecules(atoms_in_r, coords_params)
     # prevent division by zero
     atom_dist[atom_index] = 1.0
     trunc_atom_dist = atom_dist[within_cutoff]
@@ -328,7 +328,7 @@ if __name__ == "__main__":
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
     H2O_i = residue_index
-    r_cutoff = np.linspace(10.5, 50.5, 51)
+    r_cutoff = np.linspace(2.5, 42.5, 51)
     E_H2O = np.zeros([r_cutoff.shape[0]])
     E_H2O_pair_wise = get_energy(coords_params.copy(), H2O_i)[1]
     charge_H2O = np.zeros([r_cutoff.shape[0]])
@@ -345,6 +345,7 @@ if __name__ == "__main__":
     plt.legend()
     plt.figure()
     plt.plot(r_cutoff, charge_H2O, 'o')
+    plt.ylim([-1, 1])
     plt.xlabel("cutoff distance [A]")
     plt.ylabel("total charge")
     plt.legend()
