@@ -163,6 +163,29 @@ def force_field_potential(R, qij, epsilon, sigma):
 
     return LJ_potential, coulomb_potential
 
+# TODO: when deciding the cutoff list, use list of residues instead of atoms
+# the condition should be that if any atom of a certain residue falls into
+# cutoff range, that whole residue is included in cutoff range. Therefore,
+# the total charge included should be zero.
+# make broken molecules near the edge of cutoff whole
+def repair_broken_molecules(trunc_params, coords_params):
+    """
+    find dangling atoms and add the missing atoms
+    ----------------------------------------------
+    trunc_params: ndarray
+    parameters of atoms with broken molecules
+
+    coords_params: ndarray
+    parameters of atoms
+
+    Returns: 
+    ----------------------------------------------
+    updated_trunc_params: ndarray
+    truncated atom list with whole molecules
+    """
+
+    return updated_trunc_params
+
 # distance cutoff function
 def apply_cutoff(r_cutoff, atom_index, coords_params):
     """
@@ -295,7 +318,7 @@ if __name__ == "__main__":
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
     H2O_i = residue_index
-    r_cutoff = np.linspace(0.5, 50.5, 51)
+    r_cutoff = np.linspace(10.5, 50.5, 51)
     E_H2O = np.zeros([r_cutoff.shape[0]])
     E_H2O_pair_wise = get_energy(coords_params.copy(), H2O_i)[1]
     charge_H2O = np.zeros([r_cutoff.shape[0]])
