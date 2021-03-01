@@ -165,7 +165,7 @@ def force_field_potential(R, qij, epsilon, sigma):
 
 # TODO: when deciding the cutoff list, use list of residues instead of atoms
 # the condition should be that if any atom of a certain residue falls into
-# cutoff range, that whole residue is included in cutoff range. Therefore,
+# the cutoff range, that whole residue is included in cutoff range. Therefore,
 # the total charge included should be zero.
 # make broken molecules near the edge of cutoff whole
 def repair_broken_molecules(trunc_params, coords_params):
