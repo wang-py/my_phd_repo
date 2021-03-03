@@ -329,17 +329,21 @@ if __name__ == "__main__":
     # 7290 is at the center of the box
     H2O_i = residue_index
     r_cutoff = np.linspace(2.5, 42.5, 51)
-    E_H2O = np.zeros([r_cutoff.shape[0]])
-    E_H2O_pair_wise = get_energy(coords_params.copy(), H2O_i)[1]
+    E_H2O_coulomb = np.zeros([r_cutoff.shape[0]])
+    E_H2O_LJ = np.zeros([r_cutoff.shape[0]])
+    E_H2O_pair_wise_coulomb = get_energy(coords_params.copy(), H2O_i)[1]
+    E_H2O_pair_wise_LJ = get_energy(coords_params.copy(), H2O_i)[0]
     charge_H2O = np.zeros([r_cutoff.shape[0]])
     result = np.zeros([3])
     for i in range(r_cutoff.shape[0]):
         result = get_energy(coords_params.copy(), H2O_i, r_cutoff[i])
-        E_H2O[i] = result[1]
+        E_H2O_coulomb[i] = result[1]
+        E_H2O_LJ[i] = result[0]
         charge_H2O[i] = result[2]
     plt.figure()
-    plt.plot(r_cutoff, E_H2O, 'o')
-    plt.hlines(E_H2O_pair_wise, r_cutoff[0], r_cutoff[-1], linestyle='--',label="pairwise coulomb:%.2f kJ/mol"%E_H2O_pair_wise)
+    plt.plot(r_cutoff, E_H2O_LJ, 'o', label='LJ')
+    plt.hlines(E_H2O_pair_wise_LJ, r_cutoff[0], r_cutoff[-1], linestyle='--', \
+        label="pairwise LJ:%.2f kJ/mol"%E_H2O_pair_wise_LJ)
     plt.xlabel("cutoff distance [A]")
     plt.ylabel("nonbonded interaction energy [kJ/mol]")
     plt.legend()
@@ -348,7 +352,13 @@ if __name__ == "__main__":
     plt.ylim([-1, 1])
     plt.xlabel("cutoff distance [A]")
     plt.ylabel("total charge")
+    plt.figure()
+    plt.plot(r_cutoff, E_H2O_coulomb, 'o', label='coulomb')
+    plt.hlines(E_H2O_pair_wise_coulomb, r_cutoff[0], r_cutoff[-1], \
+        linestyle='--', label="pairwise coulomb:%.2f kJ/mol"%E_H2O_pair_wise_coulomb)
+    plt.xlabel("cutoff distance [A]")
+    plt.ylabel("nonbonded interaction energy [kJ/mol]")
     plt.legend()
     plt.show()
     #print("E_O is %f kJ/mol, E_H1 is %f kJ/mol and E_H2 is %f kJ/mol"%(E_O, E_H1, E_H2))
-    print("E_H2O is %f kJ/mol"%E_H2O_pair_wise)
+    #print("E_H2O is %f kJ/mol"%E_H2O_pair_wise)
