@@ -225,7 +225,7 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
 
     return trunc_params, trunc_atom_dist
 
-def turn_off_interaction(resi, coords_params):
+def turn_off_self_interaction(resi, coords_params):
     # unpacking topology
     sigma = coords_params[:,5]
     epsilon = coords_params[:,6]
@@ -277,7 +277,7 @@ def get_energy(coords_params, resi, r_cutoff=None):
     """
     # turn off inteaction within molecule
     coords_params, res_x, res_sigma, res_epsilon, res_charge = \
-        turn_off_interaction(resi, coords_params)
+        turn_off_self_interaction(resi, coords_params)
 
     res_atom_count = res_x.shape[0]
     # index of the first atom in the molecule
