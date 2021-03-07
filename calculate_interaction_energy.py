@@ -252,7 +252,7 @@ def turn_off_self_interaction(resi, coords_params):
     
     return coords_params, res_x, res_sigma, res_epsilon, res_charge
 
-# TODO: distance cutoff should be different for every atom
+# TODO: distance cutoff should be based on the position of the oxygen
 # atoms of the same molecule should have zero charge wrt each other
 def get_energy(coords_params, resi, r_cutoff=None):
     """
