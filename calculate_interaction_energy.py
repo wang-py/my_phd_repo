@@ -217,6 +217,8 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
     atom_dist = get_distance_vec(atom_index, coords_params[:,0:3])
     coords_params_dist = np.c_[coords_params, atom_dist]
     atoms_within_cutoff = np.array([x[-1] < r_cutoff for x in coords_params_dist])
+    # include self
+    #atoms_within_cutoff[atom_index] = True
     atoms_in_r = coords_params[atoms_within_cutoff]
     trunc_params, within_cutoff = repair_broken_molecules(atoms_in_r, coords_params)
     # prevent division by zero
@@ -296,8 +298,7 @@ def get_energy(coords_params, resi, r_cutoff=None):
         # indexing through the residue
         atom_i = first_atom_i + i
         x = coords_params_cutoff[:, 0:3]
-        atom_i_cutoff = np.where(coords_params_cutoff[:,4] == atom_i,\
-             coords_params_cutoff[:, 4])[0]
+        atom_i_cutoff = np.where(coords_params_cutoff[:,4] == atom_i+1)[0][0]
         r_mat = get_distance_vec(atom_i_cutoff, x)
         # unpacking topology
         sigma = coords_params_cutoff[:,5]
