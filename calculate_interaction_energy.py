@@ -220,10 +220,10 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
     atoms_in_r = coords_params[atoms_within_cutoff]
     trunc_params, within_cutoff = repair_broken_molecules(atoms_in_r, coords_params)
     # prevent division by zero
-    atom_dist[atom_index] = 1.0
-    trunc_atom_dist = atom_dist[within_cutoff]
+    #atom_dist[atom_index] = 1.0
+    #trunc_atom_dist = atom_dist[within_cutoff]
 
-    return trunc_params, trunc_atom_dist
+    return trunc_params
 
 def turn_off_self_interaction(resi, coords_params):
     # unpacking topology
@@ -286,15 +286,19 @@ def get_energy(coords_params, resi, r_cutoff=None):
     U_sys_LJ = 0.0
     U_sys_C = 0.0
     total_charge = 0.0
+    # applying cutoff based on position of oxygen
+    if r_cutoff:
+        coords_params_cutoff = apply_cutoff(r_cutoff, first_atom_i, coords_params.copy())
+    else:
+        coords_params_cutoff = coords_params
+
     for i in range(res_atom_count):
         # indexing through the residue
         atom_i = first_atom_i + i
-        if r_cutoff:
-            coords_params_cutoff, r_mat = apply_cutoff(r_cutoff, atom_i, coords_params.copy())
-        else:
-            coords_params_cutoff = coords_params
-            x = coords_params_cutoff[:, 0:3]
-            r_mat = get_distance_vec(atom_i, x)
+        x = coords_params_cutoff[:, 0:3]
+        atom_i_cutoff = np.where(coords_params_cutoff[:,4] == atom_i,\
+             coords_params_cutoff[:, 4])[0]
+        r_mat = get_distance_vec(atom_i_cutoff, x)
         # unpacking topology
         sigma = coords_params_cutoff[:,5]
         epsilon = coords_params_cutoff[:,6]
