@@ -317,8 +317,8 @@ def get_energy(coords_params, resi, r_cutoff=None):
         # NOTE: might be unnecessary since epsilon and charge are already zero
         #U_sys[atom_i] = 0
         # total interaction energy
-        U_sys_LJ += np.sum(U_LJ)
-        U_sys_C += np.sum(U_C)
+        U_sys_LJ += np.sum(U_LJ) / 2
+        U_sys_C += np.sum(U_C) / 2
 
     return U_sys_LJ, U_sys_C, total_charge
 
@@ -333,7 +333,7 @@ if __name__ == "__main__":
     #D = get_distance_vec(500, coords)
     # 7290 is at the center of the box
     H2O_i = residue_index
-    r_cutoff = np.linspace(2.5, 42.5, 51)
+    r_cutoff = np.linspace(2.5, 35.5, 51)
     E_H2O_coulomb = np.zeros([r_cutoff.shape[0]])
     E_H2O_LJ = np.zeros([r_cutoff.shape[0]])
     E_H2O_pair_wise_coulomb = get_energy(coords_params.copy(), H2O_i)[1]
