@@ -163,7 +163,7 @@ def force_field_potential(R, qij, epsilon, sigma):
 
     return LJ_potential, coulomb_potential
 
-# TODO: when deciding the cutoff list, use list of residues instead of atoms
+# NOTE: when deciding the cutoff list, use list of residues instead of atoms
 # the condition should be that if any atom of a certain residue falls into
 # the cutoff range, that whole residue is included in cutoff range. Therefore,
 # the total charge included should be zero.
