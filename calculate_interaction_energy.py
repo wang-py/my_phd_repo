@@ -317,8 +317,8 @@ def get_energy(coords_params, resi, r_cutoff=None):
         # NOTE: might be unnecessary since epsilon and charge are already zero
         #U_sys[atom_i] = 0
         # total interaction energy
-        U_sys_LJ += np.sum(U_LJ) / 2
-        U_sys_C += np.sum(U_C) / 2
+        U_sys_LJ += np.sum(U_LJ) 
+        U_sys_C += np.sum(U_C) 
 
     return U_sys_LJ, U_sys_C, total_charge
 
