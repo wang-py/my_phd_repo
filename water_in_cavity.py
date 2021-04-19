@@ -10,9 +10,16 @@ def separate_input_structure(input_ppdb):
     """
     separate cavity coords and water from input pdb
     """
-    atoms = input_ppdb.df['ATOM']\
-        [['atom_number', 'atom_name','x_coord', 'y_coord', 'z_coord']]
-    pass
+    cavity_coords = input_ppdb.df['ATOM'][atoms.df['ATOM']['atom_name' == 'C']
+    water_coords = input_ppdb.df['ATOM'][atoms.df['ATOM']['atom_name' == 'O']
+
+    cavity_coords = cavity_coords.df['ATOM']\
+        [['atom_number', 'atom_name','x_coord', 'y_coord', 'z_coord']].to_numpy()
+    
+    water_coords = water_coords.df['ATOM']\
+        [['atom_number', 'atom_name','x_coord', 'y_coord', 'z_coord']].to_numpy()
+
+    return cavity_coords, water_coords
 
 def preprocess_cavity(cavity_coords):
     pass
