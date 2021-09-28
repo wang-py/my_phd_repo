@@ -4,8 +4,14 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 from biopandas.pdb import PandasPdb
+from calculate_interaction_energy import apply_cutoff, parse_pdb
 
-# TODO: function that reads in the pdb structure
-# TODO: function for selecting atoms based on radius around a certain atom
 # TODO: plotting function that plots log # of atoms vs log(radius)
+
+if __name__ == "__main__":
+    input_pdb = sys.argv[1]
+    selected_atom = int(sys.argv[2])
+    ppdb = PandasPdb()
+    input_df = parse_pdb(ppdb, input_pdb)
