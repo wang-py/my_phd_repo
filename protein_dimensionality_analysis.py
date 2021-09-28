@@ -37,7 +37,6 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
 
     return atoms_in_r
 
-# TODO: add a linear fit to find out the slope aka dimensionality
 def plot_dimensionality(radius, number_of_atoms):
     log_r = np.log(radius)
     log_n = np.log(number_of_atoms)
@@ -53,6 +52,7 @@ def plot_dimensionality(radius, number_of_atoms):
     plt.ylabel("log(# of atoms)")
     plt.show()
 
+# TODO: add a function to find atom in the data frame based on atom number
 if __name__ == "__main__":
     input_pdb = sys.argv[1]
     selected_atom = int(sys.argv[2])
