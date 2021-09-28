@@ -39,8 +39,15 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
 
 # TODO: add a linear fit to find out the slope aka dimensionality
 def plot_dimensionality(radius, number_of_atoms):
+    log_r = np.log(radius)
+    log_n = np.log(number_of_atoms)
+    slope, y_intercept = np.polyfit(log_r, log_n, 1)
+    y_fit = slope * log_r + y_intercept
+
     plt.figure()
-    plt.plot(np.log(radius), np.log(number_of_atoms))
+    plt.plot(log_r, log_n)
+    plt.plot(log_r, y_fit, 'k--', label="linear fit k = %f"%slope)
+    plt.legend()
     plt.title("Log(# of atoms) vs. log(r)")
     plt.xlabel("log(r)")
     plt.ylabel("log(# of atoms)")
@@ -57,7 +64,7 @@ if __name__ == "__main__":
     # building data structure with properties of the atoms
     coords_params = assign_params(input_df, topology)
     # array of radii
-    radius_range = np.linspace(0,10,21)
+    radius_range = np.linspace(2,10,21)
     # applying cutoff based on distance
     atoms_within_cutoff_arr = []
     number_of_atoms_arr = []
