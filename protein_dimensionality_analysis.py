@@ -9,8 +9,6 @@ import sys
 from biopandas.pdb import PandasPdb
 from calculate_interaction_energy import get_distance_vec, parse_pdb, assign_params, read_topology
 
-# TODO: plotting function that plots log # of atoms vs log(radius)
-
 # distance cutoff function
 def apply_cutoff(r_cutoff, atom_index, coords_params):
     """
@@ -39,6 +37,15 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
 
     return atoms_in_r
 
+# TODO: add a linear fit to find out the slope aka dimensionality
+def plot_dimensionality(radius, number_of_atoms):
+    plt.figure()
+    plt.plot(np.log(radius), np.log(number_of_atoms))
+    plt.title("Log(# of atoms) vs. log(r)")
+    plt.xlabel("log(r)")
+    plt.ylabel("log(# of atoms)")
+    plt.show()
+
 if __name__ == "__main__":
     input_pdb = sys.argv[1]
     selected_atom = int(sys.argv[2])
@@ -59,4 +66,9 @@ if __name__ == "__main__":
         atoms_within_cutoff_arr.append(atoms_within_cutoff)
         number_of_atoms = len(atoms_within_cutoff)
         number_of_atoms_arr.append(number_of_atoms)
-        print("Number of atoms within %f angstroms is %d"%(radius, number_of_atoms))
+        #print("Number of atoms within %f angstroms is %d"%(radius, number_of_atoms))
+
+    number_of_atoms_arr = np.array(number_of_atoms_arr)
+    atoms_within_cutoff_arr = np.array(number_of_atoms_arr)
+
+    plot_dimensionality(radius_range, number_of_atoms_arr)
