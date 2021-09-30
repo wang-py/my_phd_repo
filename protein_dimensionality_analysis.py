@@ -44,7 +44,7 @@ def plot_dimensionality(radius, number_of_atoms):
 
     plt.figure()
     plt.plot(log_r, log_n)
-    plt.plot(log_r, y_fit, 'k--', label="linear fit k = %f"%slope)
+    plt.plot(log_r, y_fit, 'k--', label="linear fit k = %.3f"%slope)
     plt.legend()
     plt.title("Log(# of atoms) vs. log(r)")
     plt.xlabel("log(r)")
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         'residue_number', 'atom_number']].to_numpy()
     #coords_params = assign_params(input_df, topology)
     # array of radii
-    radius_range = np.linspace(1.2,40,41)
+    radius_range = np.linspace(1.2,20,41)
     # applying cutoff based on distance
     atoms_within_cutoff_arr = []
     number_of_atoms_arr = []
