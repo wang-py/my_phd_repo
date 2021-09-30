@@ -10,7 +10,7 @@ from biopandas.pdb import PandasPdb
 from calculate_interaction_energy import get_distance_vec, parse_pdb, assign_params, read_topology
 
 # distance cutoff function
-def apply_cutoff(r_cutoff, atom_index, coords_params):
+def apply_cutoff(r_cutoff, atom_index, atom_df):
     """
     apply distance cutoff for coulomb interactions
     ----------------------------------------------
@@ -20,7 +20,7 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
     atom_index: int
     index of focus atom
 
-    coords_params: ndarray
+    atom_df: ndarray
     parameters of atoms
 
     Returns: 
@@ -28,12 +28,12 @@ def apply_cutoff(r_cutoff, atom_index, coords_params):
     trunc_params: ndarray
     truncated vector of distances within cutoff range
     """
-    atom_dist = get_distance_vec(atom_index, coords_params[:,0:3])
-    coords_params_dist = np.c_[coords_params, atom_dist]
-    atoms_within_cutoff = np.array([x[-1] < r_cutoff for x in coords_params_dist])
+    atom_dist = get_distance_vec(atom_index, atom_df[:,0:3])
+    atom_df_dist = np.c_[atom_df, atom_dist]
+    atoms_within_cutoff = np.array([x[-1] < r_cutoff for x in atom_df_dist])
     # include self
     #atoms_within_cutoff[atom_index] = True
-    atoms_in_r = coords_params[atoms_within_cutoff]
+    atoms_in_r = atom_df[atoms_within_cutoff]
 
     return atoms_in_r
 
@@ -61,19 +61,23 @@ if __name__ == "__main__":
     input_df = parse_pdb(ppdb, input_pdb)
     # read in topology
     topology = read_topology(open("topology.dat"))
+    # atom_index in the numpy array, +1 because pandas starts at 1 but numpy at 0
+    atom_i = input_df[input_df['atom_number'] == selected_atom].index[0] + 1
     # building data structure with properties of the atoms
-    coords_params = assign_params(input_df, topology)
+    atom_df = input_df[['x_coord', 'y_coord', 'z_coord',\
+        'residue_number', 'atom_number']].to_numpy()
+    #coords_params = assign_params(input_df, topology)
     # array of radii
-    radius_range = np.linspace(2,10,21)
+    radius_range = np.linspace(1.2,40,41)
     # applying cutoff based on distance
     atoms_within_cutoff_arr = []
     number_of_atoms_arr = []
     for radius in radius_range:
-        atoms_within_cutoff = apply_cutoff(radius, selected_atom, coords_params)
+        atoms_within_cutoff = apply_cutoff(radius, atom_i, atom_df)
         atoms_within_cutoff_arr.append(atoms_within_cutoff)
         number_of_atoms = len(atoms_within_cutoff)
         number_of_atoms_arr.append(number_of_atoms)
-        #print("Number of atoms within %f angstroms is %d"%(radius, number_of_atoms))
+        print("Number of atoms within %f angstroms is %d"%(radius, number_of_atoms))
 
     number_of_atoms_arr = np.array(number_of_atoms_arr)
     atoms_within_cutoff_arr = np.array(number_of_atoms_arr)
