@@ -79,6 +79,8 @@ def parse_pdb(ppdb, input_pdb):
     ppdb.read_pdb(input_pdb)
     atom_df = ppdb.df['ATOM']\
         [['atom_number', 'atom_name','x_coord', 'y_coord', 'z_coord', 'residue_number']]
+    atom_df = atom_df.append(ppdb.df['HETATM']\
+        [['atom_number', 'atom_name','x_coord', 'y_coord', 'z_coord', 'residue_number']])
     return atom_df
 
 def get_distance_vec(xi, x):

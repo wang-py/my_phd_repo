@@ -2,7 +2,6 @@
 # Author: Panyue Wang
 # Email: pywang@ucdavis.edu
 
-from os import read
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -55,14 +54,14 @@ def plot_dimensionality(radius, number_of_atoms):
 # TODO: include HETATMs in the pdb to get a more accurate count of atoms
 if __name__ == "__main__":
     input_pdb = sys.argv[1]
+    # ID in pymol
     selected_atom = int(sys.argv[2])
     ppdb = PandasPdb()
     # convert pdb into a data frame
     input_df = parse_pdb(ppdb, input_pdb)
     # read in topology
     topology = read_topology(open("topology.dat"))
-    # atom_index in the numpy array, +1 because pandas starts at 1 but numpy at 0
-    atom_i = input_df[input_df['atom_number'] == selected_atom].index[0] + 1
+    atom_i = input_df[input_df['atom_number'] == selected_atom].index[0]
     # building data structure with properties of the atoms
     atom_df = input_df[['x_coord', 'y_coord', 'z_coord',\
         'residue_number', 'atom_number']].to_numpy()
