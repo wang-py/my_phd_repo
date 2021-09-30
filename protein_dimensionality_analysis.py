@@ -52,6 +52,7 @@ def plot_dimensionality(radius, number_of_atoms):
     plt.ylabel("log(# of atoms)")
     plt.show()
 
+# TODO: include HETATMs in the pdb to get a more accurate count of atoms
 if __name__ == "__main__":
     input_pdb = sys.argv[1]
     selected_atom = int(sys.argv[2])
