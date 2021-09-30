@@ -52,7 +52,6 @@ def plot_dimensionality(radius, number_of_atoms):
     plt.ylabel("log(# of atoms)")
     plt.show()
 
-# TODO: add a function to find atom in the data frame based on atom number
 if __name__ == "__main__":
     input_pdb = sys.argv[1]
     selected_atom = int(sys.argv[2])
