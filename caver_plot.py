@@ -4,7 +4,7 @@ import sys
 # Script that reads the csv output of caver and plots tunnel profiles
 
 def plotting(x, y, label):
-    plt.figure()
+    #plt.figure()
     plt.scatter(x, y, label=label)
     plt.xlabel("points")
     plt.ylabel("Radius [A]")
@@ -18,11 +18,15 @@ def select_tunnel_to_plot(tunnel_index, input_csv):
 
 if __name__ == "__main__":
     # input csv file
-    input_csv = sys.argv[1]
+    input_csv_Q = "test_files/tunnel_profiles_Q.csv"
+    input_csv_cavity = "test_files/tunnel_profiles_cavity.csv"
     # reading csv into a pandas dataframe
-    R_range_Q =  select_tunnel_to_plot(4, input_csv)
-    pts_range = range(len(R_range_Q))
-    plotting(pts_range, R_range_Q, "Q10")
+    R_range_Q =  select_tunnel_to_plot(4, input_csv_Q)
+    R_range_cavity =  select_tunnel_to_plot(1, input_csv_cavity)
+    pts_range_Q = range(len(R_range_Q))
+    pts_range_cavity = range(len(R_range_cavity))
+    plotting(pts_range_Q, R_range_Q, "Q10")
+    plotting(pts_range_cavity, R_range_cavity, "Q_cavity")
     plt.legend()
     plt.show()
     pass
