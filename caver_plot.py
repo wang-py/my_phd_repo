@@ -4,6 +4,18 @@ import sys
 # Script that reads the csv output of caver and plots tunnel profiles
 
 def plotting(x, y, label):
+    """
+    plotting function
+    ---------------------------------------------------------------------------
+    x: ndarray
+    x axis of the plot
+
+    y: ndarray
+    y axis of the plot
+
+    label: str
+    label of the data
+    """
     #plt.figure()
     plt.scatter(x, y, label=label)
     plt.xlabel("points")
