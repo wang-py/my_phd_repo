@@ -67,7 +67,7 @@ if __name__ == "__main__":
         'residue_number', 'atom_number']].to_numpy()
     #coords_params = assign_params(input_df, topology)
     # array of radii
-    radius_range = np.linspace(1.2,20,41)
+    radius_range = np.linspace(1.2,30,41)
     # applying cutoff based on distance
     atoms_within_cutoff_arr = []
     number_of_atoms_arr = []
