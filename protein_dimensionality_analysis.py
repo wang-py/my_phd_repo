@@ -39,7 +39,7 @@ def apply_cutoff(r_cutoff, atom_index, atom_df):
 def plot_dimensionality(radius, number_of_atoms):
     log_r = np.log(radius)
     log_n = np.log(number_of_atoms)
-    slope, y_intercept = np.polyfit(log_r, log_n, 1)
+    slope, y_intercept = np.polyfit(log_r[20:], log_n[20:], 1)
     y_fit = slope * log_r + y_intercept
 
     plt.figure()
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         'residue_number', 'atom_number']].to_numpy()
     #coords_params = assign_params(input_df, topology)
     # array of radii
-    radius_range = np.linspace(1.2,30,41)
+    radius_range = np.linspace(1.2,20,41)
     # applying cutoff based on distance
     atoms_within_cutoff_arr = []
     number_of_atoms_arr = []
