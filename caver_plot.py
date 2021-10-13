@@ -23,6 +23,22 @@ def plotting(x, y, label):
     plt.title("sphere size along caver points")
 
 def select_tunnel_to_plot(tunnel_index, input_csv):
+    """
+    search in csv file for the radius data of a selected tunnel
+    ---------------------------------------------------------------------------
+    tunnel_index: int
+    index of the selected tunnel
+
+    input_csv: str
+    name of the input csv file
+
+    ---------------------------------------------------------------------------
+    Returns:
+
+    R_range: ndarray
+    array of radius values of selected tunnel
+
+    """
     profile_df = pd.read_csv(input_csv, skiprows= 7 * tunnel_index - 2, nrows=1)
     R_range = profile_df.iloc[0, 13:]
 
