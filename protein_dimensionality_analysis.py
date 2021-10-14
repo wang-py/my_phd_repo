@@ -39,7 +39,7 @@ def apply_cutoff(r_cutoff, atom_index, atom_df):
 def plot_dimensionality(radius, number_of_atoms):
     log_r = np.log(radius)
     log_n = np.log(number_of_atoms)
-    slope, y_intercept = np.polyfit(log_r[20:], log_n[20:], 1)
+    slope, y_intercept = np.polyfit(log_r, log_n, 1)
     y_fit = slope * log_r + y_intercept
 
     plt.figure()
@@ -59,13 +59,10 @@ if __name__ == "__main__":
     ppdb = PandasPdb()
     # convert pdb into a data frame
     input_df = parse_pdb(ppdb, input_pdb)
-    # read in topology
-    topology = read_topology(open("topology.dat"))
     atom_i = input_df[input_df['atom_number'] == selected_atom].index[0]
     # building data structure with properties of the atoms
     atom_df = input_df[['x_coord', 'y_coord', 'z_coord',\
         'residue_number', 'atom_number']].to_numpy()
-    #coords_params = assign_params(input_df, topology)
     # array of radii
     radius_range = np.linspace(1.2,20,41)
     # applying cutoff based on distance
