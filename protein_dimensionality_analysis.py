@@ -27,7 +27,7 @@ def apply_cutoff(r_cutoff, atom_index, atom_df):
     trunc_params: ndarray
     truncated vector of distances within cutoff range
     """
-    atom_dist = get_distance_vec(atom_index, atom_df[:,0:3])
+    atom_dist = get_distance_vec(atom_index, atom_df[:,0:3].astype('float64'))
     atom_df_dist = np.c_[atom_df, atom_dist]
     atoms_within_cutoff = np.array([x[-1] < r_cutoff for x in atom_df_dist])
     # include self
@@ -62,14 +62,16 @@ if __name__ == "__main__":
     atom_i = input_df[input_df['atom_number'] == selected_atom].index[0]
     # building data structure with properties of the atoms
     atom_df = input_df[['x_coord', 'y_coord', 'z_coord',\
-        'residue_number', 'atom_number']].to_numpy()
+        'residue_number', 'atom_number', 'atom_name']].to_numpy()
+    atom_df_oxygen = np.array([x for x in atom_df if 'O' in x[5]])
+    atom_i_oxygen = np.where((selected_atom == atom_df_oxygen[:,4]))[0][0]
     # array of radii
     radius_range = np.linspace(1.2,20,41)
     # applying cutoff based on distance
     atoms_within_cutoff_arr = []
     number_of_atoms_arr = []
     for radius in radius_range:
-        atoms_within_cutoff = apply_cutoff(radius, atom_i, atom_df)
+        atoms_within_cutoff = apply_cutoff(radius, atom_i_oxygen, atom_df_oxygen)
         atoms_within_cutoff_arr.append(atoms_within_cutoff)
         number_of_atoms = len(atoms_within_cutoff)
         number_of_atoms_arr.append(number_of_atoms)
