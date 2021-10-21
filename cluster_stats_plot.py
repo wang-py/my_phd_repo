@@ -5,10 +5,6 @@ import sys
 # Script that reads the csv output of glances and nvidia-smi and plots the 
 # results 
 
-def read_cpu_csv(cpu_csv):
-    cpu_df = pd.read_csv(cpu_csv)
-    pass
-
 def read_gpu_csv(gpu_csv):
     gpu_df = pd.read_csv(gpu_csv)
     pass
@@ -36,7 +32,6 @@ def stat_plot(time, temp, usage):
     pass    
 
 if __name__ == "__main__":
-    cpu_csv = sys.argv[1]
     gpu_csv = sys.argv[2]
 
     pass
