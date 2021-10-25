@@ -59,6 +59,8 @@ def stat_plot_4GPU(time, temp, usage, title):
     """
     fig, ax = plt.subplots(1, 4, figsize=(24, 6))
     fig.suptitle(title)
+    fig2, ax2 = plt.subplots(1, 4, figsize=(24, 6))
+    fig2.suptitle(title)
     N = 10
     for i in range(4):
         time_i = time[i::4]
@@ -68,6 +70,12 @@ def stat_plot_4GPU(time, temp, usage, title):
         usage_mean_i = np.convolve(usage_i, np.ones((N,))/N, mode = 'same')
         ax[i].plot(time_i[N:-N], usage_mean_i[N:-N], label="moving average", linestyle='-', color='r')
         ax[i].legend()
+        ax[i].set_xlabel("time [S]")
+        ax[i].set_ylabel("usage [%]")
+        ax2[i].scatter(time_i, temp_i, label="temperature of GPU %d"%i)
+        ax2[i].legend()
+        ax2[i].set_xlabel("time [S]")
+        ax2[i].set_ylabel("temperature [C]")
 
     pass
 
