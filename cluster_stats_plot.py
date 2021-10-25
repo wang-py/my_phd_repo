@@ -14,7 +14,7 @@ def read_gpu_csv(gpu_csv):
     
     return gpu_temp, gpu_usage
 
-def stat_plot(time, temp, usage, title):
+def stat_plot_single_GPU(time, temp, usage, title):
     """
     function that plots the stats of selected hardware
     ----------------------------------------------------------------------------
@@ -52,13 +52,20 @@ def stat_plot(time, temp, usage, title):
 
     pass    
 
+def stat_plot_4GPU(time, temp, usage, title):
+    """
+    function that plots the stats of 4 GPUs
+    ----------------------------------------------------------------------------
+    """
+    pass
+
 if __name__ == "__main__":
     gpu_csv = sys.argv[1]
     fig_title = gpu_csv.split('.')[0].split('/')[-1]
     gpu_temp, gpu_usage = read_gpu_csv(gpu_csv)
     N = len(gpu_temp)
     time_arr = np.arange(N)
-    stat_plot(time_arr, gpu_temp, gpu_usage, fig_title)
+    stat_plot_single_GPU(time_arr, gpu_temp, gpu_usage, fig_title)
 
     plt.show()
 
