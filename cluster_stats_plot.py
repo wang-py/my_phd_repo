@@ -57,6 +57,18 @@ def stat_plot_4GPU(time, temp, usage, title):
     function that plots the stats of 4 GPUs
     ----------------------------------------------------------------------------
     """
+    fig, ax = plt.subplots(1, 4, figsize=(24, 6))
+    fig.suptitle(title)
+    N = 10
+    for i in range(4):
+        time_i = time[i::4]
+        temp_i = temp[i::4]
+        usage_i = usage[i::4]
+        ax[i].scatter(time_i, usage_i, label="usage of GPU %d"%i, s=1)
+        usage_mean_i = np.convolve(usage_i, np.ones((N,))/N, mode = 'same')
+        ax[i].plot(time_i[N:-N], usage_mean_i[N:-N], label="moving average", linestyle='-', color='r')
+        ax[i].legend()
+
     pass
 
 if __name__ == "__main__":
@@ -65,7 +77,10 @@ if __name__ == "__main__":
     gpu_temp, gpu_usage = read_gpu_csv(gpu_csv)
     N = len(gpu_temp)
     time_arr = np.arange(N)
-    stat_plot_single_GPU(time_arr, gpu_temp, gpu_usage, fig_title)
+    if fig_title[0] == '1':
+        stat_plot_single_GPU(time_arr, gpu_temp, gpu_usage, fig_title)
+    else:
+        stat_plot_4GPU(time_arr, gpu_temp, gpu_usage, fig_title)
 
     plt.show()
 
