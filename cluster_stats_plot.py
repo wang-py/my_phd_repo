@@ -76,6 +76,9 @@ def stat_plot_4GPU(time, temp, usage, title):
         ax2[i].legend()
         ax2[i].set_xlabel("time [S]")
         ax2[i].set_ylabel("temperature [C]")
+    
+    fig.savefig(title+"_usage.jpg", dpi=200)
+    fig2.savefig(title+"_temp.jpg", dpi=200)
 
     pass
 
